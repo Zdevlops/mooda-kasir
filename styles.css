@@ -984,3 +984,38 @@ h2 { font-size: 17px; font-weight: 800; margin: 0; }
   border-radius: 5px;
   background: rgba(0, 0, 0, .08);
 }
+
+/* ---------- Pembaruan aplikasi ---------- */
+.status-line.is-warn { background: #FFF4E2; color: #9A5B00; }
+.update-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin: 10px 0;
+}
+.update-version { font-weight: 700; letter-spacing: .01em; }
+.update-banner {
+  position: fixed;
+  left: 12px;
+  right: 12px;
+  bottom: 16px;
+  z-index: 60;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  padding: 12px 14px;
+  border-radius: 16px;
+  background: #0F5C55;
+  color: #fff;
+  box-shadow: 0 12px 30px rgba(8, 59, 54, .35);
+}
+.update-banner[hidden] { display: none; }
+.update-banner-text { display: flex; flex-direction: column; gap: 2px; flex: 1 1 150px; }
+.update-banner-text strong { font-size: .95rem; }
+.update-banner-text span { font-size: .8rem; opacity: .85; }
+.update-banner .btn-primary { background: #fff; color: #0F5C55; }
+.update-banner .btn-ghost { color: #fff; border-color: rgba(255, 255, 255, .5); background: transparent; }
+.update-banner .btn-ghost:hover { background: rgba(255, 255, 255, .12); border-color: #fff; }

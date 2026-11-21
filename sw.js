@@ -1,5 +1,5 @@
 /* MoodA service worker - app shell offline-first. */
-const CACHE = 'mooda-v4';
+const CACHE = 'mooda-v5';
 const ASSETS = [
   './',
   './index.html',

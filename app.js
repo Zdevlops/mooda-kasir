@@ -1934,7 +1934,7 @@
 
   // ---------- Info (bisa diperbarui tanpa memasang ulang aplikasi) ----------
   const INFO_KEY = 'mooda.info.v1';
-  const APP_VERSION = '1.1.0';
+  const APP_VERSION = '3.2.0';
 
   const INFO_BAWAAN = [
     '# MoodA Kasir',
@@ -2030,6 +2030,7 @@
     renderInfoBody(cached ? cached.text : INFO_BAWAAN);
     const ver = $('#info-version');
     if (ver) ver.textContent = 'Versi ' + APP_VERSION;
+    setUpdateVersion('Versi ' + APP_VERSION);
     if (cached && cached.at) {
       const when = new Date(cached.at);
       setInfoStatus('Terakhir diperbarui ' + when.toLocaleString('id-ID', {
@@ -2077,6 +2078,117 @@
     setInfoStatus('Kembali ke info bawaan.');
   });
 
+  // ---------- Pembaruan aplikasi (APK Android, ala Zrec) ----------
+  // Alur: cek rilis terbaru di GitHub -> unduh APK -> pemasang Android membuka.
+  // Android tidak memasang diam-diam untuk aplikasi sideload, jadi selalu ada
+  // satu ketukan konfirmasi. Di browser tidak ada plugin, jadi hanya petunjuk.
+  const updatePlugin = () => {
+    const cap = window.Capacitor;
+    const plugins = cap && cap.Plugins;
+    return (plugins && plugins.MoodaUpdater) || null;
+  };
+  let updateRelease = null;
+  let updateBusy = false;
+
+  function setUpdateStatus(msg, tone) {
+    const box = $('#update-status');
+    if (!box) return;
+    box.className = 'status-line' + (tone ? ' is-' + tone : '');
+    box.textContent = msg;
+  }
+
+  function setUpdateVersion(text) {
+    const n = $('#update-version');
+    if (n) n.textContent = text;
+  }
+
+  function showUpdateBanner(release) {
+    const box = $('#update-banner');
+    if (!box || !release) return;
+    const sub = $('#update-banner-sub');
+    if (sub) sub.textContent = 'Versi ' + String(release.version || '').replace(/^v/i, '') + ' siap dipasang.';
+    box.hidden = false;
+  }
+
+  function hideUpdateBanner() {
+    const box = $('#update-banner');
+    if (box) box.hidden = true;
+  }
+
+  async function cekPembaruan(opts) {
+    const silent = !!(opts && opts.silent);
+    const plugin = updatePlugin();
+    if (!plugin) {
+      setUpdateStatus('Pembaruan otomatis hanya tersedia di aplikasi Android (APK). Di browser, unduh versi terbaru dari halaman rilis.', 'warn');
+      const btn = $('#btn-update-install');
+      if (btn) btn.hidden = true;
+      return null;
+    }
+    if (updateBusy) return null;
+    updateBusy = true;
+    if (!silent) setUpdateStatus('Memeriksa pembaruan...');
+    try {
+      let info = null;
+      try { info = await plugin.info(); } catch (err) { info = null; }
+      if (info && info.version) setUpdateVersion('Versi ' + info.version);
+
+      const res = await plugin.check();
+      if (res && res.available) {
+        updateRelease = res;
+        const v = String(res.version || '').replace(/^v/i, '');
+        setUpdateStatus('Versi ' + v + ' tersedia.', 'ok');
+        const btn = $('#btn-update-install');
+        if (btn) btn.hidden = false;
+        showUpdateBanner(res);
+        return res;
+      }
+
+      updateRelease = null;
+      const btn = $('#btn-update-install');
+      if (btn) btn.hidden = true;
+      hideUpdateBanner();
+      if (res && res.error) {
+        setUpdateStatus('Gagal memeriksa (' + res.error + '). Coba lagi nanti.', 'warn');
+      } else {
+        setUpdateStatus('Sudah versi terbaru.', 'ok');
+      }
+      return null;
+    } catch (err) {
+      setUpdateStatus('Gagal memeriksa pembaruan (' + err.message + ').', 'warn');
+      return null;
+    } finally {
+      updateBusy = false;
+    }
+  }
+
+  async function pasangPembaruan() {
+    const plugin = updatePlugin();
+    if (!plugin) return;
+    if (updateBusy) return;
+    updateBusy = true;
+    setUpdateStatus('Mengunduh aplikasi baru...');
+    try {
+      const res = await plugin.install();
+      if (res && res.ok) {
+        setUpdateStatus('Unduhan selesai. Ikuti petunjuk pemasang Android untuk memasang.', 'ok');
+        hideUpdateBanner();
+      } else if (res && res.needsPermission) {
+        setUpdateStatus('Izinkan "Pasang aplikasi tidak dikenal" untuk MoodA, lalu tekan Perbarui lagi.', 'warn');
+      } else {
+        setUpdateStatus('Gagal mengunduh (' + ((res && res.error) || 'tidak diketahui') + ').', 'warn');
+      }
+    } catch (err) {
+      setUpdateStatus('Gagal mengunduh (' + err.message + ').', 'warn');
+    } finally {
+      updateBusy = false;
+    }
+  }
+
+  if ($('#btn-update-check')) $('#btn-update-check').addEventListener('click', () => cekPembaruan());
+  if ($('#btn-update-install')) $('#btn-update-install').addEventListener('click', pasangPembaruan);
+  if ($('#btn-update-banner')) $('#btn-update-banner').addEventListener('click', pasangPembaruan);
+  if ($('#btn-update-dismiss')) $('#btn-update-dismiss').addEventListener('click', hideUpdateBanner);
+
   // ---------- Init ----------
   (async () => {
     try {
@@ -2094,6 +2206,11 @@
     // Kunci layar hanya bila PIN sudah pernah dibuat, supaya pemakaian pertama tidak terhambat.
     if (readPinRecord()) {
       requirePin();
+    }
+
+    // Di APK Android: periksa pembaruan diam-diam, tampilkan banner bila ada.
+    if (updatePlugin()) {
+      setTimeout(() => { cekPembaruan({ silent: true }); }, 1200);
     }
   })();
 })();

@@ -23,6 +23,7 @@ Tidak perlu akun, tidak perlu internet setelah terpasang.
 - **Rekap** — omzet, transaksi, item terjual, rata-rata, menu terlaris, rincian per metode bayar, cari riwayat, ekspor PDF/CSV.
 - **Harga & foto menu** — ubah harga, ganti ilustrasi dengan foto sendiri.
 - **Info** — pengumuman yang bisa diperbarui tanpa memasang ulang aplikasi.
+- **Pembaruan otomatis** — aplikasi Android memeriksa rilis terbaru di GitHub, mengunduh APK-nya, lalu membuka pemasang. Ada di **Info → Pembaruan aplikasi**.
 - **Kunci PIN** — layar terkunci bila PIN dibuat.
 - **Database** — IndexedDB (ratusan MB) dengan cadangan di localStorage.
 
@@ -63,10 +64,36 @@ Buka `http://localhost:8080`.
 ```bash
 node _test_cdp.js          # 20 tes: menu, bayar, struk, rekap, responsif
 node _test_struk_info.js   # 19 tes: struk baru + halaman Info
+node _test_update.js       # 13 tes: cek pembaruan, banner, alur pasang
 node _test_idb.js          #  7 tes: IndexedDB, migrasi, kapasitas
 ```
 
 Semua tes memakai Chrome headless lewat DevTools Protocol.
+
+## Pembaruan otomatis (APK Android)
+
+Cara kerjanya sama seperti Zrec:
+
+1. Saat aplikasi dibuka, ia bertanya ke `api.github.com/repos/Zdevlops/mooda-kasir/releases/latest`.
+2. Nomor build rilis dibaca dari badan rilis (`<!-- mooda:versionCode=N -->`) dan dibandingkan dengan yang terpasang.
+3. Bila lebih baru, muncul banner **Versi baru tersedia**. Tekan **Perbarui**.
+4. APK diunduh ke cache, isinya diperiksa (nama paket + nomor build), lalu pemasang Android dibuka.
+5. Android tidak pernah memasang diam-diam untuk aplikasi sideload, jadi tinggal satu ketukan konfirmasi.
+
+Jawaban GitHub disimpan 30 menit supaya tidak kena batas 60 permintaan/jam.
+
+**Cara merilis versi baru:**
+
+```bash
+# 1. naikkan versi di package.json (mis. 3.2.0 -> 3.3.0)
+# 2. commit, lalu buat tag
+git tag v3.3.0
+git push origin main --tags
+```
+
+Workflow akan membangun APK bertanda tangan, menerbitkan rilis, dan menaruh nomor build di badan rilis. Aplikasi yang sudah terpasang akan menawarkan pembaruan sendiri.
+
+APK ditandatangani dengan kunci rilis tetap yang disimpan di GitHub Secrets (`MOODA_KEYSTORE_B64` dan kawan-kawan), jadi pembaruan bisa dipasang menimpa versi lama tanpa uninstall. Salinan kuncinya ada di `%USERPROFILE%\.mooda-release\` — **jangan dihapus**, tanpa itu pembaruan berikutnya tidak bisa menimpa yang terpasang.
 
 ## Struktur
 
