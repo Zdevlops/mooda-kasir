@@ -92,7 +92,15 @@ public final class MoodaUpdater {
 
     @SuppressWarnings("deprecation")
     private static long localVersionCode(PackageInfo info) {
-        return Build.VERSION.SDK_INT >= 28 ? info.longVersionCode : (long) info.versionCode;
+        // getLongVersionCode() baru ada sejak API 28. Dipanggil lewat refleksi
+        // supaya berkas ini tetap bisa dikompilasi dengan android.jar lama.
+        try {
+            Object value = PackageInfo.class.getMethod("getLongVersionCode").invoke(info);
+            if (value instanceof Long) return (Long) value;
+        } catch (Throwable ignored) {
+            // lanjut ke versionCode lama
+        }
+        return (long) info.versionCode;
     }
 
     /** Tanya GitHub soal rilis terbaru. Callback berjalan di thread utama. */
