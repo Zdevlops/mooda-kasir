@@ -219,7 +219,7 @@ jobs:
           code = parts[0] * 10000 + parts[1] * 100 + parts[2]
 
           src = pathlib.Path("dist/app-release.apk")
-          apk = pathlib.Path("dist/MoodA-%s.apk" % version)
+          apk = pathlib.Path("dist/MoodA.apk")
           apk.write_bytes(src.read_bytes())
           src.unlink()
 

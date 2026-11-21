@@ -1,15 +1,36 @@
-# MoodA Kasir
+<p align="center">
+  <img src="icons/brand-256.png" width="112" alt="MoodA">
+</p>
 
-Aplikasi kasir untuk kafe. Satu aplikasi, jalan offline, data tersimpan di perangkat.
+<h1 align="center">MoodA Kasir</h1>
+
+<p align="center">Aplikasi kasir untuk kafe. Jalan offline, data tersimpan di perangkat.</p>
+
+<p align="center">
+  <a href="https://github.com/Zdevlops/mooda-kasir/releases/latest/download/MoodA.apk">
+    <img src="https://img.shields.io/badge/UNDUH%20APK-Android%20%E2%80%A2%20gratis-0F5C55?style=for-the-badge&logo=android&logoColor=white" alt="Unduh APK Android">
+  </a>
+  &nbsp;
+  <a href="https://github.com/Zdevlops/mooda-kasir/releases/latest/download/MoodA-Single.html">
+    <img src="https://img.shields.io/badge/UNDUH-HTML%20satu%20file-FF7A26?style=for-the-badge&logo=html5&logoColor=white" alt="Unduh HTML satu file">
+  </a>
+</p>
+
+<p align="center">
+  <a href="https://github.com/Zdevlops/mooda-kasir/releases/latest"><img src="https://img.shields.io/github/v/release/Zdevlops/mooda-kasir?style=flat-square&label=versi&color=0F5C55" alt="Versi terbaru"></a>
+  <a href="https://github.com/Zdevlops/mooda-kasir/releases"><img src="https://img.shields.io/github/downloads/Zdevlops/mooda-kasir/total?style=flat-square&label=unduhan" alt="Total unduhan"></a>
+  <img src="https://img.shields.io/badge/offline-siap-2EA043?style=flat-square" alt="Siap offline">
+  <img src="https://img.shields.io/badge/pembaruan-otomatis-0F5C55?style=flat-square" alt="Pembaruan otomatis">
+</p>
 
 ## Unduh
 
-Buka halaman **[Releases](../../releases/latest)** dan pilih:
+Tekan tombol di atas, atau buka halaman **[Rilis terbaru](../../releases/latest)**.
 
 | Berkas | Untuk | Cara pakai |
 |---|---|---|
-| `MoodA-<versi>.apk` | Android | Unduh di HP, buka, izinkan "instal dari sumber tidak dikenal" |
-| `MoodA-Single.html` | Windows, Mac, iPhone, Android | Satu file. Klik dua kali (komputer) atau buka dengan Chrome (HP) |
+| **`MoodA.apk`** | Android | Unduh di HP, buka, izinkan "instal dari sumber tidak dikenal" |
+| **`MoodA-Single.html`** | Windows, Mac, iPhone, Android | Satu file. Klik dua kali (komputer) atau buka dengan Chrome (HP) |
 
 Tidak perlu akun, tidak perlu internet setelah terpasang.
 
